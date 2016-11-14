@@ -97,7 +97,7 @@ class MCA(BaseEstimator):
         # TODO: Where to adjust s?
         if self.benzecri_correction:
             s = self.adjust_inertia(s, self.Q_)
-        λ = s[:(J - self.Q_)]**2
+        λ = s**2
         expl = λ / λ.sum()
 
         # this is broken, maybe also em/rm and the retval of svd
@@ -112,12 +112,17 @@ class MCA(BaseEstimator):
         self.b_ = b
         self.g_ = g
         self.expl_ = expl
+        self.J = J
+
+    def transform(self, X, y=None):
+        # TODO: verify!
+        return pd.get_dummies(X).values @ self.v_[:, :self.n_components]
 
     @staticmethod
     def adjust_inertia(σ, Q):
         σ_ = σ.copy()
         mask = σ_ >= 1 / Q
-        σ_[mask] = (Q / (Q - 1)) ** 2 * (σ_[mask] - (1 / Q)) ** 2
+        σ_[mask] = ((Q / (Q - 1)) * (σ_[mask] - 1 / Q)) ** 2
         σ[~mask] = 0
         return σ_
 
