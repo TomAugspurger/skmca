@@ -1,0 +1,6 @@
+R/
+*.dta
+references/
+.Rhistory
+.RData
+FactoMineR/
