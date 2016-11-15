@@ -68,7 +68,7 @@ class MCA(BaseEstimator):
         return result
 
     def _fit_burt(self, Z: np.array):
-        raise ValueError("Haven't verified this yet")
+        print("Haven't verified this yet")
 
         J = Z.shape[1]                 # Total number of levels
         C = Z.T @ Z                    # Burt matrix
