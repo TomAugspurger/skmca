@@ -1,4 +1,6 @@
-# TODO: do 3 point scale
+"""
+MCA
+"""
 import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator
@@ -176,3 +178,6 @@ class MCA(BaseEstimator):
         σ_[mask] = ((Q / (Q - 1)) * (σ_[mask] - 1 / Q)) ** 2
         σ[~mask] = 0
         return σ_
+
+
+__version__ = '0.1.0'

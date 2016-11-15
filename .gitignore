@@ -4,3 +4,4 @@ references/
 .Rhistory
 .RData
 FactoMineR/
+dist/
