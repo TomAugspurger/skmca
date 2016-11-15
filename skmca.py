@@ -3,10 +3,10 @@ MCA
 """
 import numpy as np
 import pandas as pd
-from sklearn.base import BaseEstimator
+from sklearn.base import BaseEstimator, TransformerMixin
 
 
-class MCA(BaseEstimator):
+class MCA(BaseEstimator, TransformerMixin):
     r"""
     Multiple Correspondence Analysis
 
@@ -69,6 +69,7 @@ class MCA(BaseEstimator):
         else:
             raise TypeError
 
+        self.C_ = C
         Q = self.Q_
         J = Z.shape[1]
         N = self.n_components if self.n_components is not None else J - Q

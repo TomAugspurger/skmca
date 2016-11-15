@@ -111,6 +111,20 @@ class TestMCA:
         assert np.allclose(mca.f_[:5, 0], e_f0, atol=1e-2)
         assert np.allclose(mca.f_[:5, 1], e_f1, atol=1e-2)
 
+    def test_values_burt(self, data):
+        mca = skmca.MCA(method='burt')
+        mca.fit(data)
+
+        e_C = np.array([119, 0, 0, 0, 0, 27, 28, 30, 22, 12])
+        assert np.allclose(mca.C_[0, :10], e_C)
+
+        # eP = np.array([0.008539036, 0.000000000, 0.0000000000, 0.0000000000, 0.000000000, 0.0019374282, 0.0020091848, 0.002152698, 0.0015786452])
+        # np.allclose(mca.P_, eP)
+        assert mca.P_.shape == (20, 20)
+
+        # eS = np.array([-0.006262177, 0.01756290, -0.008199114, -0.00765882, -0.003977155, -0.004837055, -0.007572277, 0.026702329, -0.009622879])
+        # assert np.allclose(mca.S_, eS)
+
     def test_n_components(self, data):
         mca = skmca.MCA(n_components=2)
         mca.fit(data)
@@ -118,3 +132,11 @@ class TestMCA:
         assert mca.f_.shape == (871, 2)
         assert mca.g_.shape == (2, 20)
         assert mca.a_.shape == (871, 2)
+
+    def test_transform(self, data):
+        mca = skmca.MCA(n_components=2)
+        X_ = mca.fit_transform(data)
+        assert X_.shape[1] == 2
+
+        X_ = mca.transform(data)
+        assert X_.shape[1] == 2
