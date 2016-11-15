@@ -68,6 +68,7 @@ class MCA(BaseEstimator):
         return result
 
     def _fit_burt(self, Z: np.array):
+        raise ValueError("Haven't verified this yet")
 
         J = Z.shape[1]                 # Total number of levels
         C = Z.T @ Z                    # Burt matrix
@@ -140,7 +141,32 @@ class MCA(BaseEstimator):
         self.a_ = a
 
     def transform(self, X, y=None):
-        # TODO: verify!
+        """
+        Transform the DataFrame `X` into the reduced space.
+
+        Parameters
+        -----------
+        X : DataFrame
+
+            .. warning::
+
+            This *must* have the same categories as the original
+            data
+
+        y : object
+            Ignored. For compatability with scikit-learn pipelines
+
+        Returns
+        -------
+        trn : numpy.array
+            Has shape (N x K) where N is the number of observations
+            and K is the minimum of `self.n_components` or `J - Q`
+            where `Q` is the number of columns in the original DataFrame
+            and `J` is the number of columns in the dummy-encoded DataFrame,
+            the total number of levels. If `self.n_compoments` is None,
+            the default, then `J - Q` is used.
+        """
+        # TODO: Verify!
         return pd.get_dummies(X).values @ self.v_[:, :self.n_components]
 
     @staticmethod
