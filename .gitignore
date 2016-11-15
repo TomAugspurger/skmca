@@ -5,3 +5,4 @@ references/
 .RData
 FactoMineR/
 dist/
+*.egg-info/
