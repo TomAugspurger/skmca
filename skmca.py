@@ -58,57 +58,22 @@ class MCA(BaseEstimator):
         ``X`` should be a DataFrame of Categoricals.
         """
         df = X.copy()
-        X = pd.get_dummies(df).values
+        Z = pd.get_dummies(df).values
         self.I_, self.Q_ = df.shape
 
         if self.method == 'indicator':
-            result = self._fit_indicator(X)
+            C = Z
         elif self.method == 'burt':
-            result = self._fit_burt(X)
+            print("Haven't verified this yet")
+            C = Z.T @ Z
         else:
             raise TypeError
-        return result
 
-    def _fit_burt(self, Z: np.array):
-        print("Haven't verified this yet")
-
-        J = Z.shape[1]                 # Total number of levels
-        C = Z.T @ Z                    # Burt matrix
-
-        P = C / C.sum()                # Correspondence matrix
-        r = P.sum(1)                   # equals row and column masses
-
-        # Marginals
-        cm = np.outer(r, r)
-
-        # Residual (TODO verify)
-        S = (P - cm) / np.sqrt(cm)
-
-        u, s, v = np.linalg.svd(S)  # paper seems to claim that U = V.T? Typo?
-        Σ = np.diag(s)
-
-        A = v / cm
-        F = A * s
-
-        inertia = np.sum(s**2)
-
-        self.J_ = J
-        self.Σ_ = Σ
-        self.F_ = F
-        self.inertia_ = inertia
-        self.σ_adj_ = self.adjust_inertia(s, self.Q_)
-        self.cm_ = self.rm_ = cm
-
-        self.s_ = s
-        self.u_ = u
-        self.expl_ = self.b_ = self.g_ = self.v_ = self.λ_ = None
-
-    def _fit_indicator(self, Z: np.array):
         Q = self.Q_
         J = Z.shape[1]
         N = self.n_components if self.n_components is not None else J - Q
 
-        P = Z / Z.sum()
+        P = C / C.sum()
         cm = P.sum(0)
         rm = P.sum(1)
         eP = np.outer(rm, cm)
@@ -119,14 +84,15 @@ class MCA(BaseEstimator):
         lam = s[:N]**2
         expl = lam / lam.sum()
 
-        b = (v / np.sqrt(cm))[:N]  # colcoord
-        g = (b.T * np.sqrt(lam)).T        # colpcoord
+        b = (v / np.sqrt(cm))[:N]                       # colcoord
+        g = (b.T * np.sqrt(lam)).T                      # colpcoord
 
         u_red = u[:, :N]
 
-        f = ((u_red * np.sqrt(lam)).T / np.sqrt(rm)).T
-        a = f / np.sqrt(lam)
+        f = ((u_red * np.sqrt(lam)).T / np.sqrt(rm)).T  # rowcoord
+        a = f / np.sqrt(lam)                            # rowpcoord
 
+        # TODO: nicer names for these
         self.u_ = u
         self.s_ = s
         self.v_ = v
@@ -141,6 +107,7 @@ class MCA(BaseEstimator):
         self.lam_ = lam
         self.f_ = f
         self.a_ = a
+        return self
 
     def transform(self, X, y=None):
         """
@@ -180,4 +147,4 @@ class MCA(BaseEstimator):
         return σ_
 
 
-__version__ = '0.1.0'
+__version__ = '0.1.1'
