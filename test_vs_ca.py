@@ -110,3 +110,11 @@ class TestMCA:
         e_f1 = np.array([0.443, 0.807, 0.513, 0.387, 1.092])
         assert np.allclose(mca.f_[:5, 0], e_f0, atol=1e-2)
         assert np.allclose(mca.f_[:5, 1], e_f1, atol=1e-2)
+
+    def test_n_components(self, data):
+        mca = mymca.MCA(n_components=2)
+        mca.fit(data)
+
+        assert mca.f_.shape == (871, 2)
+        assert mca.g_.shape == (2, 20)
+        assert mca.a_.shape == (871, 2)
