@@ -105,3 +105,8 @@ class TestMCA:
             -0.1495643, -0.2601418, -0.1498915, 0.4786497
         ])
         assert np.allclose(mca.g_[0], e_g1)
+
+        e_f0 = np.array([-.210, -0.325, 0.229, 0.303, -0.276])
+        e_f1 = np.array([0.443, 0.807, 0.513, 0.387, 1.092])
+        assert np.allclose(mca.f_[:5, 0], e_f0, atol=1e-2)
+        assert np.allclose(mca.f_[:5, 1], e_f1, atol=1e-2)

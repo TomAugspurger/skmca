@@ -5,9 +5,34 @@ from sklearn.base import BaseEstimator
 
 
 class MCA(BaseEstimator):
+    r"""
+    Multiple Correspondence Analysis
 
-    def __init__(self, benzecri_correction=True, method='indicator',
-                 n_components=None):
+    Parameters
+    ----------
+
+    method : {'indicator', 'burt'}
+    n_components : int
+    benzecri_correction : bool
+
+    Attributes
+    ----------
+
+    TODO
+
+    Notes
+    -----
+    We use the notation of Nenadic and Greenacre (2005)
+
+    @article{nenadic2005computation,
+      title={Computation of multiple correspondence analysis, with code in R},
+      author={Nenadic, Oleg and Greenacre, Michael},
+      year={2005},
+      publisher={UPF Working Paper}
+    }
+    """
+    def __init__(self, method='indicator', n_components=None,
+                 benzecri_correction=True):
         self.benzecri_correction = benzecri_correction
         self.method = method
         self.n_components = n_components
@@ -78,6 +103,7 @@ class MCA(BaseEstimator):
     def _fit_indicator(self, Z: np.array):
         Q = self.Q_
         J = Z.shape[1]
+        N = self.n_components if self.n_components is not None else J - Q
 
         P = Z / Z.sum()
         cm = P.sum(0)
@@ -87,11 +113,16 @@ class MCA(BaseEstimator):
 
         u, s, v = np.linalg.svd(S, full_matrices=False)
 
-        lam = s[:(J - Q)]**2
+        lam = s[:N]**2
         expl = lam / lam.sum()
 
-        b = (v / np.sqrt(cm))[:len(lam)]
-        g = (b.T * np.sqrt(lam)).T
+        b = (v / np.sqrt(cm))[:N]  # colcoord
+        g = (b.T * np.sqrt(lam)).T        # colpcoord
+
+        u_red = u[:, :N]
+
+        f = ((u_red * np.sqrt(lam)).T / np.sqrt(rm)).T
+        a = f / np.sqrt(lam)
 
         self.u_ = u
         self.s_ = s
@@ -105,6 +136,8 @@ class MCA(BaseEstimator):
         self.cm_ = cm
         self.rm_ = rm
         self.lam_ = lam
+        self.f_ = f
+        self.a_ = a
 
     def transform(self, X, y=None):
         # TODO: verify!
