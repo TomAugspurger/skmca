@@ -17,3 +17,10 @@ Usage
                     sep='\t', dtype='category')
    mca = MCA()
    mca.fit(df)
+
+References
+~~~~~~~~~~
+
+This library follows the setup in `Nenadic and Greenacre (2005)`_.
+
+.. Nenadic and Greenacre (2005): https://core.ac.uk/download/pdf/6591520.pdf
