@@ -3,7 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 import pytest
-import mymca
+import skmca
 
 HERE = os.path.dirname(__file__)
 
@@ -37,12 +37,12 @@ class TestMCA:
 
     @pytest.mark.parametrize('method', ['indicator', 'burt'])
     def test_fit(self, data, method):
-        mca = mymca.MCA(method=method)
+        mca = skmca.MCA(method=method)
         mca.fit(data)
         self.check_attrs(mca)
 
     def test_values(self, data):
-        mca = mymca.MCA()
+        mca = skmca.MCA()
         mca.fit(data)
 
         assert mca.Z_.shape == (871, 20)
@@ -112,7 +112,7 @@ class TestMCA:
         assert np.allclose(mca.f_[:5, 1], e_f1, atol=1e-2)
 
     def test_n_components(self, data):
-        mca = mymca.MCA(n_components=2)
+        mca = skmca.MCA(n_components=2)
         mca.fit(data)
 
         assert mca.f_.shape == (871, 2)
