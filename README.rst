@@ -1,3 +1,5 @@
+Use https://github.com/MaxHalford/Prince instead
+
 skmca
 -----
 
